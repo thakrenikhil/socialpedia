@@ -1,8 +1,9 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:instaclone/state/auth/providers/auth_state_provider.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -22,78 +23,146 @@ class _SignInViewState extends State<SignInView> {
       backgroundColor: const Color(0x000f0f0f),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 120),
-              Center(
-                child: SvgPicture.asset(AppAssets.KCollegeX),
+        child: Consumer(
+          builder: (_, WidgetRef ref, Widget? child) {
+            return Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 120),
+                  Center(
+                    child: SvgPicture.asset(AppAssets.KCollegeX),
+                  ),
+                  const SizedBox(height: 80),
+                  AuthField(
+                    controller: _emailController,
+                    hintText: 'Email',
+                  ),
+                  const SizedBox(height: 30),
+                  AuthField(
+                    controller: _passwordController,
+                    hintText: 'Password',
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: CustomTextButton(
+                      color: Colors.blue,
+                      onPressed: () {},
+                      text: 'Forget Password?',
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  ShakeWidget(
+                    key: _shakeKey,
+                    shakeOffset: 10.0,
+                    shakeDuration: const Duration(milliseconds: 500),
+                    child: PrimaryButton(
+                      onTap: () {
+                        if (_emailController.text.isNotEmpty &&
+                            _passwordController.text.isNotEmpty) {
+                        } else {
+                          _shakeKey.currentState?.shake();
+                        }
+                      },
+                      text: 'Login',
+                      color: Colors.white,
+                      height: 50,
+                      borderRadius: 20,
+                      width: 305,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const DividerWithText(),
+                  const SizedBox(height: 20),
+                  CustomSocialButtonBlack(
+                    color: Colors.grey[900],
+                    onTap: ref.read(authStateProvider.notifier).loginWithGoogle,
+                    icon: AppAssets.kGoogle,
+                    text: 'Sign in with Google',
+                    margin: 0,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomSocialButton(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                elevation: 1,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.5,
+                                  height:
+                                      MediaQuery.of(context).size.height / 5,
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(colors: [
+                                        Colors.blueGrey,
+                                        Colors.blueAccent
+                                      ]),
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            offset: const Offset(12, 26),
+                                            blurRadius: 50,
+                                            spreadRadius: 0,
+                                            color: Colors.grey.withOpacity(.1)),
+                                      ]),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.white12,
+                                        radius: 25,
+                                        child: Image.network(
+                                            "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/FlutterBricksLogo-Med.png?alt=media&token=7d03fedc-75b8-44d5-a4be-c1878de7ed52"),
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text("TMKC",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold)),
+                                      const SizedBox(
+                                        height: 3.5,
+                                      ),
+                                      Text("Chup-chap Google se kr",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300)),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                      text: 'Sign in with Apple',
+                      icon: AppAssets.KApple),
+                  const SizedBox(
+                    height: 60,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: CustomTextButton(
+                      color: Colors.blue,
+                      onPressed: () {},
+                      text: 'Not a member? | Signup Now',
+                    ),
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 80),
-              AuthField(
-                controller: _emailController,
-                hintText: 'Email',
-              ),
-              const SizedBox(height: 30),
-              AuthField(
-                controller: _passwordController,
-                hintText: 'Password',
-              ),
-              const SizedBox(height: 15,),
-              Align(
-                alignment: Alignment.center,
-                child: CustomTextButton(color: Colors.blue,
-                  onPressed: () {},
-                  text: 'Forget Password?',
-                ),
-              ),
-              const SizedBox(height: 15),
-              ShakeWidget(
-                key: _shakeKey,
-                shakeOffset: 10.0,
-                shakeDuration: const Duration(milliseconds: 500),
-                child: PrimaryButton(
-                  onTap: () {
-                    if (_emailController.text.isNotEmpty &&
-                        _passwordController.text.isNotEmpty) {
-                    } else {
-                      _shakeKey.currentState?.shake();
-                    }
-                  },
-                  text: 'Login',color: Colors.white,
-                  height: 50,
-                  borderRadius: 20,
-                  width: 305,
-                ),
-              ),
-              const SizedBox(height: 20),
-              const DividerWithText(),
-              const SizedBox(height: 20),
-              CustomSocialButtonBlack(color: Colors.lightBlue[400],
-                onTap: () {},
-                icon: AppAssets.kFaceBook,
-                text: 'Sign in with Facebook',
-                margin: 0,
-                icons: const FaIcon(FontAwesomeIcons.facebook,color: Colors.blue,),
-              ),
-              const SizedBox(height: 20),
-              CustomSocialButtonBlack(color: Colors.grey[900],
-                onTap: () {},
-                icon: AppAssets.kGoogle,
-                text: 'Sign in with Google',
-                margin: 0,
-              ),
-              const SizedBox(height: 20),
-              CustomSocialButton(
-                onTap: () {},
-                icon: AppAssets.KApple,
-                text: 'Sign in with Apple',
-                margin: 0,
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -128,7 +197,9 @@ class CustomSocialButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedButton(
       onTap: onTap,
-      child: PrimaryContainer(width: 305,color:color ,
+      child: PrimaryContainer(
+        width: 305,
+        color: color,
         height: 50,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
@@ -171,7 +242,9 @@ class CustomSocialButtonBlack extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedButton(
       onTap: onTap,
-      child: PrimaryContainer(width: 305,color:color ,
+      child: PrimaryContainer(
+        width: 305,
+        color: color,
         height: 50,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
@@ -213,8 +286,8 @@ class _AnimatedButtonState extends State<AnimatedButton>
       vsync: this,
       duration: _animationDuration,
     )..addListener(() {
-      setState(() {});
-    });
+        setState(() {});
+      });
     super.initState();
   }
 
@@ -257,7 +330,9 @@ class DividerWithText extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Divider(color: Colors.white,),
+            child: Divider(
+              color: Colors.white,
+            ),
           ),
           SizedBox(width: 15),
           Text(
@@ -267,7 +342,9 @@ class DividerWithText extends StatelessWidget {
           ),
           SizedBox(width: 15),
           Expanded(
-            child: Divider(color: Colors.white,),
+            child: Divider(
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -309,8 +386,8 @@ class _PrimaryButtonState extends State<PrimaryButton>
       vsync: this,
       duration: _animationDuration,
     )..addListener(() {
-      setState(() {});
-    });
+        setState(() {});
+      });
     super.initState();
   }
 
@@ -373,7 +450,7 @@ abstract class ShakeAnimation<T extends StatefulWidget> extends State<T>
   ShakeAnimation(this.animationDuration);
   final Duration animationDuration;
   late final animationController =
-  AnimationController(vsync: this, duration: animationDuration);
+      AnimationController(vsync: this, duration: animationDuration);
 
   @override
   void dispose() {
@@ -432,7 +509,7 @@ class ShakeWidgetState extends ShakeAnimation<ShakeWidget> {
       child: widget.child,
       builder: (context, child) {
         final sineValue =
-        sin(widget.shakeCount * 2 * pi * animationController.value);
+            sin(widget.shakeCount * 2 * pi * animationController.value);
         return Transform.translate(
           offset: Offset(sineValue * widget.shakeOffset, 0),
           child: child,
@@ -452,7 +529,6 @@ class CustomTextButton extends StatelessWidget {
     required this.text,
     this.fontSize,
     this.color,
-
     super.key,
   });
 
@@ -462,7 +538,8 @@ class CustomTextButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         text,
-        style: TextStyle(decoration: TextDecoration.underline,
+        style: TextStyle(
+            decoration: TextDecoration.underline,
             color: color ?? const Color(0xFF329494),
             fontSize: fontSize ?? 14,
             fontWeight: FontWeight.bold),
@@ -491,27 +568,35 @@ class AuthField extends StatelessWidget {
     return PrimaryContainer(
       height: 50,
       width: 305,
-      child: TextFormField(textAlign: TextAlign.center,
+      child: TextFormField(
+        textAlign: TextAlign.start,
         controller: controller,
         onChanged: onChanged,
         validator: validator,
         decoration: InputDecoration(
-          hintText: hintText,
+          labelText: hintText,
+          //hintText: hintText,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 16,
           ),
-          hintStyle: const TextStyle(color: Colors.grey,),
+          hintStyle: const TextStyle(
+            color: Colors.grey,
+          ),
           filled: true,
           fillColor: Colors.black,
           enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(style: BorderStyle.solid,color: Colors.white60),borderRadius: BorderRadius.all(Radius.circular(8))
-          ),
+              borderSide:
+                  BorderSide(style: BorderStyle.solid, color: Colors.white60),
+              borderRadius: BorderRadius.all(Radius.circular(8))),
           focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(style: BorderStyle.solid,color: Colors.cyanAccent),borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide:
+                BorderSide(style: BorderStyle.solid, color: Colors.cyanAccent),
+            borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
-          border:  const OutlineInputBorder(
-            borderSide: BorderSide(style: BorderStyle.solid,color: Colors.cyanAccent),
+          border: const OutlineInputBorder(
+            borderSide:
+                BorderSide(style: BorderStyle.solid, color: Colors.cyanAccent),
           ),
           errorBorder: const OutlineInputBorder(
             borderSide: BorderSide.none,
@@ -559,6 +644,80 @@ class PrimaryContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: child,
+    );
+  }
+}
+
+class DialogFb3 extends StatelessWidget {
+  const DialogFb3({Key? key}) : super(key: key);
+
+  final primaryColor = const Color(0xff4338CA);
+  final secondaryColor = const Color(0xff6D28D9);
+  final accentColor = const Color(0xffffffff);
+  final backgroundColor = const Color(0xffffffff);
+  final errorColor = const Color(0xffEF4444);
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomSocialButton(
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  height: MediaQuery.of(context).size.height / 5,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [primaryColor, secondaryColor]),
+                      borderRadius: BorderRadius.circular(15.0),
+                      boxShadow: [
+                        BoxShadow(
+                            offset: const Offset(12, 26),
+                            blurRadius: 50,
+                            spreadRadius: 0,
+                            color: Colors.grey.withOpacity(.1)),
+                      ]),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: accentColor.withOpacity(.05),
+                        radius: 25,
+                        child: Image.network(
+                            "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/FlutterBricksLogo-Med.png?alt=media&token=7d03fedc-75b8-44d5-a4be-c1878de7ed52"),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text("TMKC",
+                          style: TextStyle(
+                              color: accentColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(
+                        height: 3.5,
+                      ),
+                      Text("Chup-chap Google se kr",
+                          style: TextStyle(
+                              color: accentColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300)),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+      },
+      text: 'Signin with Apple',
+      icon: AppAssets.KApple,
     );
   }
 }
