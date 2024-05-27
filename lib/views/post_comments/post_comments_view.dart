@@ -38,7 +38,6 @@ class PostCommentsView extends HookConsumerWidget {
         request.value,
       ),
     );
-
     // enable Post button when text is entered in the textfield
     useEffect(
       () {
