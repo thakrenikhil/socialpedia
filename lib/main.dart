@@ -1,15 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instaclone/login.dart';
-import 'package:instaclone/state/auth/providers/auth_state_provider.dart';
 import 'package:instaclone/state/auth/providers/is_logged_in_provider.dart';
 import 'package:instaclone/state/providers/is_loading_proveder.dart';
 import 'package:instaclone/views/components/loading/loading_screen.dart';
-import 'package:instaclone/views/login/google_button.com.dart';
-import 'package:instaclone/views/login/login_view.dart';
 import 'package:instaclone/views/main/main_view.dart';
+
 import 'firebase_options.dart';
 
 void main() async {

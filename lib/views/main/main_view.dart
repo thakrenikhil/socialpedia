@@ -9,6 +9,8 @@ import 'package:instaclone/views/components/constants/strings.dart';
 import 'package:instaclone/views/components/dialogs/alert_dialog_model.dart';
 import 'package:instaclone/views/components/dialogs/logout_dialog.dart';
 import 'package:instaclone/views/create_new_post/create_new_post_view.dart';
+import 'package:instaclone/views/tabs/home/home_view.dart';
+import 'package:instaclone/views/tabs/search/search_view.dart';
 import 'package:instaclone/views/tabs/user_posts/user_post_view.dart';
 
 class MainView extends ConsumerStatefulWidget {
@@ -35,9 +37,9 @@ class _MainViewState extends ConsumerState<MainView> {
                       if (videoFile == null) {
                         return;
                       }
-      
+
                       ref.refresh(postSettingProvider);
-      
+
                       if (!mounted) {
                         return;
                       }
@@ -52,13 +54,13 @@ class _MainViewState extends ConsumerState<MainView> {
                 IconButton(
                     onPressed: () async {
                       final imageFile =
-                      await ImagePickerhelper.pickImageFromgallery();
+                          await ImagePickerhelper.pickImageFromgallery();
                       if (imageFile == null) {
                         return;
                       }
-      
+
                       ref.refresh(postSettingProvider);
-      
+
                       if (!mounted) {
                         return;
                       }
@@ -83,20 +85,20 @@ class _MainViewState extends ConsumerState<MainView> {
               ],
               bottom: const TabBar(tabs: [
                 Tab(
-                  icon: Icon(Icons.person),
+                  icon: Icon(Icons.home),
                 ),
                 Tab(
                   icon: Icon(Icons.search),
                 ),
                 Tab(
-                  icon: Icon(Icons.home),
+                  icon: Icon(Icons.person),
                 ),
               ]),
             ),
             body: const TabBarView(
               children: [
-                UserPostView(),
-                UserPostView(),
+                HomeView(),
+                SearchView(),
                 UserPostView(),
               ],
             ),
