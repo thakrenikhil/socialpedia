@@ -5,6 +5,7 @@ import 'package:instaclone/login.dart';
 import 'package:instaclone/state/auth/providers/is_logged_in_provider.dart';
 import 'package:instaclone/state/providers/is_loading_proveder.dart';
 import 'package:instaclone/views/components/loading/loading_screen.dart';
+import 'package:instaclone/views/main/main_scroll_view.dart';
 import 'package:instaclone/views/main/main_view.dart';
 
 import 'firebase_options.dart';
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
         });
         final isLoggin = ref.watch(isLoggedInProvider);
         if (isLoggin) {
-          return const MainView();
+          return const MainScrollView();
         } else {
           return const SignInView();
         }
