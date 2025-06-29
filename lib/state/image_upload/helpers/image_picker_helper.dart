@@ -12,5 +12,5 @@ class ImagePickerhelper {
       _imagePicker.pickImage(source: ImageSource.gallery).toFile();
 
   static Future<File?> pickVideoFromgallery() =>
-      _imagePicker.pickImage(source: ImageSource.gallery).toFile();
+      _imagePicker.pickVideo(source: ImageSource.gallery).toFile();
 }

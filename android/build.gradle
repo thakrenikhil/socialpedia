@@ -1,12 +1,12 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '2.0.20'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:8.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.android.support:multidex:1.0.3'
     }
@@ -18,10 +18,50 @@ allprojects {
         mavenCentral()
     }
 }
-
+subprojects {
+    afterEvaluate {
+        if (project.plugins.hasPlugin('kotlin-android')) {
+            project.android.kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+    }
+}
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    if (project.name.contains("flutter_plugin_android_lifecycle")) {
+        tasks.configureEach {
+            if (it.name.contains("test")) {
+                it.enabled = false
+            }
+        }
+    }
+}
+
+subprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin("com.android.application") ||
+                project.plugins.hasPlugin("com.android.library")) {
+            project.android {
+                compileSdkVersion 34
+                buildToolsVersion "34.0.0"
+            }
+        }
+    }
+}
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    namespace project.group
+                }
+            }
+        }
+    }
 }
 subprojects {
     project.evaluationDependsOn(':app')

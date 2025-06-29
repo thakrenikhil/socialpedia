@@ -9,9 +9,12 @@ import 'package:instaclone/views/components/constants/strings.dart';
 import 'package:instaclone/views/components/dialogs/alert_dialog_model.dart';
 import 'package:instaclone/views/components/dialogs/logout_dialog.dart';
 import 'package:instaclone/views/create_new_post/create_new_post_view.dart';
+import 'package:instaclone/views/main/main_scroll_view.dart';
 import 'package:instaclone/views/tabs/home/home_view.dart';
 import 'package:instaclone/views/tabs/search/search_view.dart';
 import 'package:instaclone/views/tabs/user_posts/user_post_view.dart';
+
+import '../../state/providers/is_list_view_provider.dart';
 
 class MainView extends ConsumerStatefulWidget {
   const MainView({super.key});
@@ -23,6 +26,8 @@ class MainView extends ConsumerStatefulWidget {
 class _MainViewState extends ConsumerState<MainView> {
   @override
   Widget build(BuildContext context) {
+    final isListView = ref.watch(isListViewProvider);
+
     return Scaffold(
       body: DefaultTabController(
           length: 3,
@@ -82,6 +87,17 @@ class _MainViewState extends ConsumerState<MainView> {
                       }
                     },
                     icon: const FaIcon(Icons.login_sharp)),
+                IconButton(
+                    onPressed: () {
+                      ref.watch(isListViewProvider.notifier).state = !isListView;
+
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MainScrollView(),
+                          ));
+                    },
+                    icon: const FaIcon(Icons.ad_units)),
               ],
               bottom: const TabBar(tabs: [
                 Tab(
