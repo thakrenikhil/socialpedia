@@ -13,22 +13,41 @@ class UserPostView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final posts = ref.watch(userPostsProvider);
-    return RefreshIndicator(
-        child: posts.when(data: (posts) {
-          if (posts.isEmpty) {
-            return const EmptyContentsWithTextAnimationView(
-                text: Strings.youHaveNoPosts);
-          } else {
-            return PostsGridView(posts: posts);
-          }
-        }, error: (error, stackTrace) {
-          return const ErrorAnimationView();
-        }, loading: () {
-          return const LoadingAnimationView();
-        }),
+
+    return Container(
+      color: const Color(0xFF121212), // Dark background
+      child: RefreshIndicator(
+        color: Colors.white,
+        backgroundColor: Colors.black,
         onRefresh: () {
           ref.refresh(userPostsProvider);
           return Future.delayed(const Duration(seconds: 2));
-        });
+        },
+        child: posts.when(
+          data: (posts) {
+            if (posts.isEmpty) {
+              return const SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: 500, // ensure enough space to trigger refresh
+                  child: Center(
+                    child: EmptyContentsWithTextAnimationView(
+                      text: Strings.youHaveNoPosts,
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: PostsGridView(posts: posts),
+              );
+            }
+          },
+          error: (_, __) => const ErrorAnimationView(),
+          loading: () => const LoadingAnimationView(),
+        ),
+      ),
+    );
   }
 }

@@ -32,7 +32,7 @@ class _PostThumbnailViewForScrollState
   Widget build(BuildContext context) {
     final request = RequestForPostAndComments(
       postId: widget.post.postId,
-      limit: 3, // at most 3 comments
+      limit: 3,
       sortByCreatedAt: true,
       dateSorting: DateSorting.oldestOnTop,
     );
@@ -41,78 +41,78 @@ class _PostThumbnailViewForScrollState
       specificPostWithCommentsProvider(request),
     );
 
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: widget.onTapped,
-          child: Container(
-            decoration: BoxDecoration(
+    return Container(
+      color: const Color(0xFF121212), // softer dark background
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          GestureDetector(
+            onTap: widget.onTapped,
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-            ),
-            height: 300,
-            width: 300,
-            child: Image.network(
-              widget.post.fileUrl,
-              fit: BoxFit.cover,
-              height: 290,
-              width: 290,
+              child: Image.network(
+                widget.post.fileUrl,
+                fit: BoxFit.cover,
+                height: 280,
+                width: double.infinity,
+              ),
             ),
           ),
-        ),
-        postWithComments.when(
-          data: (postWithComments) {
-            final postId = postWithComments.post.postId;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0 ,right: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                  PostDisplayNameAndMessageView(
-                    post: postWithComments.post,
-
-                  ),const Spacer(),
-                      // like button if post allows liking it
-                      if (postWithComments.post.allowsLikes)
-                        LikeButton(
-                          postId: postId,
-                        ),
-                      // comment button if post allows commenting on it
-                      if (postWithComments.post.allowsComments)
-                        IconButton(
-                          icon: const Icon(
-                            Icons.mode_comment_outlined,
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PostCommentsView(
-                                  postId: postId,
+          postWithComments.when(
+            data: (postWithComments) {
+              final postId = postWithComments.post.postId;
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0, vertical: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PostDisplayNameAndMessageView(
+                      post: postWithComments.post,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        if (postWithComments.post.allowsLikes)
+                          LikeButton(postId: postId),
+                        if (postWithComments.post.allowsComments)
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            icon: const Icon(
+                              Icons.mode_comment_outlined,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => PostCommentsView(
+                                    postId: postId,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
+                              );
+                            },
+                          ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            );
-          },
-          error: (Object error, StackTrace stackTrace) {
-            return const ErrorAnimationView();
-          },
-          loading: () {
-            return const LoadingAnimationView();
-          },
-        ),
-        const Divider(
-          color: Colors.white,
-          height: 30,
-        ),
-      ],
+              );
+            },
+            error: (_, __) => const ErrorAnimationView(),
+            loading: () => const LoadingAnimationView(),
+          ),
+          const Divider(
+            color: Colors.grey,
+            thickness: 0.4,
+            height: 20,
+            indent: 12,
+            endIndent: 12,
+          ),
+        ],
+      ),
     );
   }
 }

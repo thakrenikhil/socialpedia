@@ -50,19 +50,21 @@ class PostCommentsView extends HookConsumerWidget {
     );
 
     return Scaffold(
+      backgroundColor: const Color(0xFF121212), // base dark background
       appBar: AppBar(
+        backgroundColor: const Color(0xFF1E1E1E), // soft dark gray app bar
+        elevation: 0,
         title: const Text(
           Strings.comments,
+          style: TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.send),
+            icon: Icon(Icons.send,
+                color: hasText.value ? Colors.orange : Colors.grey),
             onPressed: hasText.value
                 ? () {
-                    _submitCommentWithController(
-                      commentController,
-                      ref,
-                    );
+                    _submitCommentWithController(commentController, ref);
                   }
                 : null,
           ),
@@ -85,61 +87,64 @@ class PostCommentsView extends HookConsumerWidget {
                   }
                   return RefreshIndicator(
                     onRefresh: () {
-                      ref.refresh(
-                        postCommentsProvider(
-                          request.value,
-                        ),
-                      );
-                      return Future.delayed(
-                        const Duration(
-                          seconds: 1,
-                        ),
-                      );
+                      ref.refresh(postCommentsProvider(request.value));
+                      return Future.delayed(const Duration(seconds: 1));
                     },
+                    color: Colors.orangeAccent,
                     child: ListView.builder(
                       padding: const EdgeInsets.all(8.0),
                       itemCount: comments.length,
                       itemBuilder: (context, index) {
                         final comment = comments.elementAt(index);
-                        return CommentTile(
-                          comment: comment,
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 6.0),
+                          padding: const EdgeInsets.all(12.0),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E1E1E),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: CommentTile(comment: comment),
                         );
                       },
                     ),
                   );
                 },
-                error: (error, stackTrace) {
-                  return const ErrorAnimationView();
-                },
-                loading: () {
-                  return const LoadingAnimationView();
-                },
+                error: (_, __) => const ErrorAnimationView(),
+                loading: () => const LoadingAnimationView(),
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 8.0,
-                    right: 8.0,
+            Container(
+              color: const Color(0xFF1A1A1A),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              child: TextField(
+                controller: commentController,
+                style: const TextStyle(color: Colors.white),
+                textInputAction: TextInputAction.send,
+                onSubmitted: (comment) {
+                  if (comment.isNotEmpty) {
+                    _submitCommentWithController(commentController, ref);
+                  }
+                },
+                decoration: InputDecoration(
+                  hintText: Strings.writeYourCommentHere,
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  filled: true,
+                  fillColor: const Color(0xFF121212),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide:
+                        const BorderSide(color: Colors.grey, width: 0.4),
                   ),
-                  child: TextField(
-                    textInputAction: TextInputAction.send,
-                    controller: commentController,
-                    onSubmitted: (comment) {
-                      if (comment.isNotEmpty) {
-                        _submitCommentWithController(
-                          commentController,
-                          ref,
-                        );
-                      }
-                    },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: Strings.writeYourCommentHere,
-                    ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide:
+                        const BorderSide(color: Colors.grey, width: 0.4),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide:
+                        const BorderSide(color: Colors.orange, width: 0.8),
                   ),
                 ),
               ),
