@@ -11,27 +11,33 @@ class PostsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF121212), // softer dark background
+      color: const Color(0xFF121212), // Dark base
       child: ListView.separated(
         key: const PageStorageKey('posts-list-view'),
         itemCount: posts.length,
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
-        separatorBuilder: (context, index) => const SizedBox(height: 8),
-        itemBuilder: (BuildContext context, int index) {
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
           final post = posts.elementAt(index);
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: TweenAnimationBuilder<double>(
-              tween: Tween<double>(begin: 0, end: 1),
-              duration: const Duration(milliseconds: 400),
-              builder: (context, value, child) => Opacity(
-                opacity: value,
-                child: Transform.translate(
-                  offset: Offset(0, 20 * (1 - value)),
-                  child: child,
-                ),
+
+          return TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOut,
+            // delay: Duration(milliseconds: index * 40), // staggered effect
+            builder: (context, value, child) => Opacity(
+              opacity: value,
+              child: Transform.translate(
+                offset: Offset(0, 30 * (1 - value)),
+                child: child,
               ),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              elevation: 2,
+              shadowColor: Colors.black26,
+              borderRadius: BorderRadius.circular(12),
               child: PostThumbnailViewForScroll(
                 onTapped: () {
                   Navigator.of(context).push(

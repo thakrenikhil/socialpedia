@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instaclone/state/posts/modals/post.dart';
 import 'package:instaclone/views/components/animations/error_animation_view.dart';
 import 'package:instaclone/views/components/post/post_display_name_and%20_message.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../../enum/date_sorting.dart';
 import '../../../state/comments/modals/post_comment_request.dart';
@@ -51,11 +54,12 @@ class _PostThumbnailViewForScrollState
             onTap: widget.onTapped,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                widget.post.fileUrl,
+              child: CachedNetworkImage(
+                imageUrl: widget.post.fileUrl,
                 fit: BoxFit.cover,
                 height: 280,
                 width: double.infinity,
+                cacheManager: getCacheManager(),
               ),
             ),
           ),
@@ -114,5 +118,14 @@ class _PostThumbnailViewForScrollState
         ],
       ),
     );
+  }
+}
+
+BaseCacheManager getCacheManager() {
+  if (kIsWeb) {
+    // Use a web-compatible cache manager or memory cache
+    return DefaultCacheManager(); // or a custom one for web
+  } else {
+    return DefaultCacheManager();
   }
 }
