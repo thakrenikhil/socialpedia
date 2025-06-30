@@ -39,63 +39,57 @@ class _PostDetailsViewState extends ConsumerState<PostDetailsView> {
   Widget build(BuildContext context) {
     final request = RequestForPostAndComments(
       postId: widget.post.postId,
-      limit: 3, // at most 3 comments
+      limit: 3,
       sortByCreatedAt: true,
       dateSorting: DateSorting.oldestOnTop,
     );
 
-    // get the actual post together with its comments
     final postWithComments = ref.watch(
-      specificPostWithCommentsProvider(
-        request,
-      ),
+      specificPostWithCommentsProvider(request),
     );
 
-    // can we delete this post?
     final canDeletePost = ref.watch(
-      canCurrentUserDeletePostProvider(
-        widget.post,
-      ),
+      canCurrentUserDeletePostProvider(widget.post),
     );
 
     return Scaffold(
+      backgroundColor: const Color(0xFF121212), // dark mode background
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: const Text(
           Strings.postDetails,
+          style: TextStyle(color: Colors.white),
         ),
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
-          // share button is always present
           postWithComments.when(
             data: (postWithComments) {
               return IconButton(
-                icon: const Icon(Icons.share),
+                icon: const Icon(Icons.share, color: Colors.white),
                 onPressed: () {
-                  final url = postWithComments.post.fileUrl;
                   Share.share(
-                    url,
+                    postWithComments.post.fileUrl,
                     subject: Strings.checkOutThisPost,
                   );
                 },
               );
             },
-            error: (error, stackTrace) {
-              return const SmallErrorAnimationView();
-            },
-            loading: () {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
+            error: (_, __) => const SmallErrorAnimationView(),
+            loading: () => const Padding(
+              padding: EdgeInsets.all(12),
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           ),
-          // delete button or no delete button if user cannot delete this post
           if (canDeletePost.value ?? false)
             IconButton(
-              icon: const Icon(Icons.delete),
+              icon: const Icon(Icons.delete, color: Colors.redAccent),
               onPressed: () async {
                 final shouldDeletePost = await const DeleteDialog(
-                    titleOfObjectToDelete: Strings.post)
+                  titleOfObjectToDelete: Strings.post,
+                )
                     .present(context)
                     .then((shouldDelete) => shouldDelete ?? false);
+
                 if (shouldDeletePost) {
                   await ref
                       .read(deletePostProvider.notifier)
@@ -104,7 +98,6 @@ class _PostDetailsViewState extends ConsumerState<PostDetailsView> {
                     Navigator.of(context).pop();
                   }
                 }
-                // delete the post now
               },
             )
         ],
@@ -113,82 +106,57 @@ class _PostDetailsViewState extends ConsumerState<PostDetailsView> {
         data: (postWithComments) {
           final postId = postWithComments.post.postId;
           return SingleChildScrollView(
+            padding: const EdgeInsets.all(12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                PostImageOrVideoView(
-                  post: postWithComments.post,
-                ),
-                // like and comment buttons
+                PostImageOrVideoView(post: postWithComments.post),
+                const SizedBox(height: 12),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // like button if post allows liking it
                     if (postWithComments.post.allowsLikes)
-                      LikeButton(
-                        postId: postId,
-                      ),
-                    // comment button if post allows commenting on it
+                      LikeButton(postId: postId),
+                    const SizedBox(width: 8),
                     if (postWithComments.post.allowsComments)
                       IconButton(
                         icon: const Icon(
                           Icons.mode_comment_outlined,
+                          color: Colors.white,
                         ),
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => PostCommentsView(
-                                postId: postId,
-                              ),
+                              builder: (_) => PostCommentsView(postId: postId),
                             ),
                           );
                         },
                       ),
                   ],
                 ),
-                // post details (shows divider at bottom)
-                PostDisplayNameAndMessageView(
-                  post: postWithComments.post,
-                ),
-                PostDateView(
-                  dateTime: postWithComments.post.createdAt,
-                ),
+                const SizedBox(height: 12),
+                PostDisplayNameAndMessageView(post: postWithComments.post),
+                const SizedBox(height: 8),
+                PostDateView(dateTime: postWithComments.post.createdAt),
                 const Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   child: Divider(
-                    color: Colors.white70,
+                    color: Colors.grey,
+                    thickness: 0.5,
                   ),
                 ),
-                // comments
-                CompactCommentsColumn(
-                  comments: postWithComments.comments,
-                ),
-                // display like count
+                CompactCommentsColumn(comments: postWithComments.comments),
                 if (postWithComments.post.allowsLikes)
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        LikesCountView(
-                          postId: postId,
-                        ),
-                      ],
-                    ),
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: LikesCountView(postId: postId),
                   ),
-                // add spacing to bottom of screen
-                const SizedBox(
-                  height: 100,
-                ),
+                const SizedBox(height: 80),
               ],
             ),
           );
         },
-        error: (error, stackTrace) {
-          return const ErrorAnimationView();
-        },
-        loading: () {
-          return const LoadingAnimationView();
-        },
+        error: (_, __) => const ErrorAnimationView(),
+        loading: () => const LoadingAnimationView(),
       ),
     );
   }

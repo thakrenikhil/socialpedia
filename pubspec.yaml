@@ -57,6 +57,8 @@ dependencies:
   flutter_svg: ^2.0.9
   curved_navigation_bar: ^1.0.4
   animated_text_kit: ^4.2.2
+  cached_network_image: ^3.4.1
+  flutter_cache_manager: ^3.4.1
 
 dev_dependencies:
   flutter_test:
